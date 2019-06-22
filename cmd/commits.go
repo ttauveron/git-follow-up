@@ -1,5 +1,5 @@
 /*
-Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+Copyright © 2019 Thibaut Tauveron <thibaut.tauveron@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ import (
 	"git-follow-up/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"os"
 	"sort"
 	"sync"
+	"text/tabwriter"
 )
 
 var filter *internal.Filter
@@ -65,8 +67,15 @@ to quickly create a Cobra application.`,
 		}
 
 		sort.Sort(internal.ByDate(commits))
+
+		// initialize tabwriter
+		w := new(tabwriter.Writer)
+		defer w.Flush()
+
+		// minwidth, tabwidth, padding, padchar, flags
+		w.Init(os.Stdout, 8, 8, 0, ' ', 0)
 		for _, v := range commits {
-			fmt.Println(v)
+			fmt.Fprintf(w, v.String()+ "\n")
 		}
 
 	},
@@ -99,7 +108,6 @@ func init() {
 
 	//TODO flag validation
 	commitsCmd.Flags().String("from", "wtd", "ytd, mtd, wtd, yesterday, today, [dayOfWeek], [yyyy-MM-dd]")
-	// todo https://github.com/spf13/cobra/issues/661
 	commitsCmd.Flags().StringSlice("label", []string{}, "label")
 	commitsCmd.Flags().StringSlice("author", []string{}, "author")
 	//_ = commitsCmd.MarkFlagRequired("from")

@@ -24,13 +24,16 @@ func NewCommit(c *object.Commit, r *git.Repository, name string) (commit *Commit
 func (c Commit) String() string {
 	// TODO --summary flag for one liner commit message
 	message := strings.Split(c.Commit.Message, "\n")[0]
+	if len(message) > 70 {
+		message = message[:70]+"..."
+	}
 	hash := c.Commit.Hash.String()[:8]
-	author := c.Commit.Author.Email
+	author := c.Commit.Author.Name
 	date := c.Commit.Author.When.Format("2006-01-02 15:04")
 	name := c.Name
 
-	return fmt.Sprintf("[%s][%s][%s] %s (%s)", name, date, hash, message, author)
-
+	// Color reference : https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+	return fmt.Sprintf("\033[1;31m[%s\t]\033[0m\033[1;36m[%s]\t\033[0m\033[1;34m[%s]\t\033[0m %s \033[1;32m\t(%s)\033[0m", name, date, hash, message, author)
 }
 
 type ByDate []Commit
