@@ -25,4 +25,3 @@ func main() {
 
 // todo autocompletion
 // todo concurrency sync & more
-// todo filter fields to display 

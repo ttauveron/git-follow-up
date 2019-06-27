@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/pflag"
 	"os"
 	"sort"
+	"strings"
 	"sync"
 	"text/tabwriter"
 )
@@ -74,11 +75,45 @@ to quickly create a Cobra application.`,
 
 		// minwidth, tabwidth, padding, padchar, flags
 		w.Init(os.Stdout, 8, 8, 0, ' ', 0)
-		for _, v := range commits {
-			fmt.Fprintf(w, v.String()+ "\n")
+		for _, commit := range commits {
+			fmt.Fprintf(w, formatCommit(commit)+"\n")
 		}
 
 	},
+}
+
+func formatCommit(c internal.Commit) (result string) {
+	message := strings.Split(c.Commit.Message, "\n")[0]
+	if len(message) > 70 {
+		message = message[:70] + "..."
+	}
+	hash := c.Commit.Hash.String()[:8]
+	author := c.Commit.Author.Name
+	date := c.Commit.Author.When.Format("2006-01-02 15:04")
+	name := c.Name
+
+	// Color reference : https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+	if internal.Contains(filter.Display, "repo") {
+		result += "\033[1;31m[" + name + "\t]\033[0m"
+	}
+
+	if internal.Contains(filter.Display, "date") {
+		result += "\033[1;36m[" + date + "]\t\033[0m"
+	}
+
+	if internal.Contains(filter.Display, "hash") {
+		result += "\033[1;34m[" + hash + "]\t\033[0m"
+	}
+
+	if internal.Contains(filter.Display, "message") {
+		result += " " + message + " "
+	}
+
+	if internal.Contains(filter.Display, "author") {
+		result += "\033[1;32m\t(" + author + ")\033[0m"
+	}
+
+	return result
 }
 
 // Syncing all repositories defined in the `config.yaml` file
@@ -110,6 +145,7 @@ func init() {
 	commitsCmd.Flags().String("from", "wtd", "ytd, mtd, wtd, yesterday, today, [dayOfWeek], [yyyy-MM-dd]")
 	commitsCmd.Flags().StringSlice("label", []string{}, "label")
 	commitsCmd.Flags().StringSlice("author", []string{}, "author")
+	commitsCmd.Flags().StringSlice("display", []string{}, "display")
 	//_ = commitsCmd.MarkFlagRequired("from")
 	commitsCmd.Flags().BoolP("update", "u", false, "Update all git repos")
 	rootCmd.AddCommand(commitsCmd)

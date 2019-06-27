@@ -12,6 +12,7 @@ type Filter struct {
 	From    time.Time
 	Labels  []string
 	Authors []string
+	Display []string
 }
 
 func NewFilter(flags *pflag.FlagSet) (f *Filter) {
@@ -37,6 +38,17 @@ func NewFilter(flags *pflag.FlagSet) (f *Filter) {
 		fmt.Printf("%v\n", err)
 	}
 	f.Authors = append(f.Authors, authors...)
+
+	// Display filter
+	if !flags.Changed("display") {
+		f.Display = append(f.Display, "repo", "date", "hash", "message", "author")
+	} else {
+		displays, err := flags.GetStringSlice("display")
+		if err != nil {
+			fmt.Printf("%v\n", err)
+		}
+		f.Display = append(f.Display, displays...)
+	}
 
 	return
 }

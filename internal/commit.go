@@ -22,7 +22,6 @@ func NewCommit(c *object.Commit, r *git.Repository, name string) (commit *Commit
 }
 
 func (c Commit) String() string {
-	// TODO --summary flag for one liner commit message
 	message := strings.Split(c.Commit.Message, "\n")[0]
 	if len(message) > 70 {
 		message = message[:70]+"..."
