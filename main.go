@@ -23,8 +23,6 @@ func main() {
 	cmd.Execute()
 }
 
-// TODO colorize output
-// TODO manage access ssh vs https vs access token
 // todo autocompletion
 // todo concurrency sync & more
 // todo filter fields to display 

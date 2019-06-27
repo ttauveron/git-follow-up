@@ -5,15 +5,24 @@ import (
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/config"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
+	"io/ioutil"
 	"os/user"
 )
 
 type Repository struct {
-	Url       string
-	Labels    []string
-	Name      string
-	LocalPath string
+	Url            string
+	Labels         []string
+	Name           string
+	LocalPath      string
+	Authentication Authentication
+}
+
+type Authentication struct {
+	Type     string
+	AuthFile string `mapstructure:"auth_file"`
 }
 
 func (r Repository) ListCommits(filter Filter) (commits []Commit, e error) {
@@ -52,14 +61,36 @@ func (r Repository) SyncRepo() error {
 
 	fmt.Println("Syncing " + r.Name + "...")
 
-	currentUser, _ := user.Current()
+	var auth transport.AuthMethod
 
-	sshAuth, _ := ssh.NewPublicKeysFromFile("git", currentUser.HomeDir+"/.ssh/id_rsa", "")
+	switch r.Authentication.Type {
+	case "ssh":
+		if r.Authentication.AuthFile == "" {
+			currentUser, _ := user.Current()
+			auth, _ = ssh.NewPublicKeysFromFile("git", currentUser.HomeDir+"/.ssh/id_rsa", "")
+		} else {
+			auth, _ = ssh.NewPublicKeysFromFile("git", r.Authentication.AuthFile, "")
+		}
+		break
+	case "access_token":
+		accessToken, err := ioutil.ReadFile(r.Authentication.AuthFile)
+		if err != nil {
+			return fmt.Errorf("%v : auth file error: %v\n", r.Name, err)
+		}
+		auth = &http.BasicAuth{
+			Username: "anything",
+			Password: string(accessToken),
+		}
+		break
+	default:
+		auth = nil
+		break
+	}
 
 	// Cloning repository
 	repo, err := git.PlainClone(r.LocalPath, false, &git.CloneOptions{
 		URL:  r.Url,
-		Auth: sshAuth,
+		Auth: auth,
 	})
 
 	switch err {
@@ -83,10 +114,10 @@ func (r Repository) SyncRepo() error {
 	}
 	fetchOptions := &git.FetchOptions{
 		RefSpecs: []config.RefSpec{"refs/*:refs/*"},
-		Auth:     sshAuth,
+		Auth:     auth,
 	}
 	if err := remote.Fetch(fetchOptions); err != nil && err != git.NoErrAlreadyUpToDate {
-		return fmt.Errorf("fetch error : %v\n", err)
+		return fmt.Errorf("fetching %v : %v\n", r.Name, err)
 	}
 
 	// Pulling all branches

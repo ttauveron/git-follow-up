@@ -92,7 +92,6 @@ func initConfig() {
 		err = viper.Unmarshal(&config)
 		for i := 0; i < len(config.Repositories); i++ {
 			config.Repositories[i].LocalPath = gitPath + config.Repositories[i].Name
-
 		}
 
 		if err != nil {
