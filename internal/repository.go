@@ -88,9 +88,10 @@ func (r Repository) SyncRepo() error {
 	}
 
 	// Cloning repository
-	repo, err := git.PlainClone(r.LocalPath, false, &git.CloneOptions{
-		URL:  r.Url,
-		Auth: auth,
+	repo, err := git.PlainClone(r.LocalPath, true, &git.CloneOptions{
+		URL:        r.Url,
+		Auth:       auth,
+		NoCheckout: true,
 	})
 
 	switch err {
@@ -119,13 +120,6 @@ func (r Repository) SyncRepo() error {
 	if err := remote.Fetch(fetchOptions); err != nil && err != git.NoErrAlreadyUpToDate {
 		return fmt.Errorf("fetching %v : %v\n", r.Name, err)
 	}
-
-	// Pulling all branches
-	w, err := repo.Worktree()
-	if err != nil {
-		return fmt.Errorf("%v\n", err)
-	}
-	w.Pull(&git.PullOptions{RemoteName: "origin"})
 
 	return nil
 }
