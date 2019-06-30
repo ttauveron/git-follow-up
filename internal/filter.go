@@ -26,7 +26,7 @@ func NewFilter(flags *pflag.FlagSet) (f *Filter) {
 	if err != nil {
 		fmt.Printf("%v\n", err)
 	}
-	f.SetFrom(from)
+	f.setFrom(from)
 
 	// Labels filter
 	labels, err := flags.GetStringSlice("label")
@@ -56,7 +56,7 @@ func NewFilter(flags *pflag.FlagSet) (f *Filter) {
 	return
 }
 
-func (filter *Filter) SetFrom(from string) {
+func (filter *Filter) setFrom(from string) {
 	// TODO handle timezone
 	regexDate, _ := regexp.Compile("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")
 
