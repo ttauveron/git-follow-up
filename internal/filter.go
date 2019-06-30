@@ -15,6 +15,9 @@ type Filter struct {
 	Display []string
 }
 
+var DisplayArgs = []string{"repo", "date", "hash", "message", "author"}
+var FromArgs = []string{"ytd", "mtd", "wtd", "yesterday", "today"}
+
 func NewFilter(flags *pflag.FlagSet) (f *Filter) {
 	f = &Filter{}
 
@@ -41,7 +44,7 @@ func NewFilter(flags *pflag.FlagSet) (f *Filter) {
 
 	// Display filter
 	if !flags.Changed("display") {
-		f.Display = append(f.Display, "repo", "date", "hash", "message", "author")
+		f.Display = append(f.Display, DisplayArgs...)
 	} else {
 		displays, err := flags.GetStringSlice("display")
 		if err != nil {

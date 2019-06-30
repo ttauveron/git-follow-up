@@ -142,10 +142,24 @@ func UpdateRepos(flags *pflag.FlagSet) {
 func init() {
 
 	//TODO flag validation
-	commitsCmd.Flags().String("from", "wtd", "ytd, mtd, wtd, yesterday, today, [dayOfWeek], [yyyy-MM-dd]")
+
+
 	commitsCmd.Flags().StringSlice("label", []string{}, "label")
 	commitsCmd.Flags().StringSlice("author", []string{}, "author")
+
+	commitsCmd.Flags().String("from", "wtd", "ytd, mtd, wtd, yesterday, today, [yyyy-MM-dd]")
+	annotation := make(map[string][]string)
+	annotation[cobra.BashCompCustom] = []string{"__from_values"}
+	flag := commitsCmd.Flags().Lookup("from")
+	flag.Annotations = annotation
+
+
+	annotation = make(map[string][]string)
+	annotation[cobra.BashCompCustom] = []string{"__display_values"}
 	commitsCmd.Flags().StringSlice("display", []string{}, "display")
+	flag = commitsCmd.Flags().Lookup("display")
+	flag.Annotations = annotation
+
 	//_ = commitsCmd.MarkFlagRequired("from")
 	commitsCmd.Flags().BoolP("update", "u", false, "Update all git repos")
 	rootCmd.AddCommand(commitsCmd)
