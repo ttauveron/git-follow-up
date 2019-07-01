@@ -19,11 +19,9 @@ import (
 	"fmt"
 	"git-follow-up/internal"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"os"
 	"sort"
 	"strings"
-	"sync"
 	"text/tabwriter"
 )
 
@@ -48,8 +46,9 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			fmt.Printf("%v\n", err)
 		}
+
 		if doUpdate {
-			UpdateRepos(cmd.Flags())
+			updateCmd.Run(cmd, args)
 		}
 
 		var commits []internal.Commit
@@ -116,33 +115,7 @@ func formatCommit(c internal.Commit) (result string) {
 	return result
 }
 
-// Syncing all repositories defined in the `config.yaml` file
-func UpdateRepos(flags *pflag.FlagSet) {
-	var wg sync.WaitGroup
-	for _, repo := range config.Repositories {
-
-		// Skip update on non-matching labels
-		if flags.Changed("label") && !internal.ContainsAll(repo.Labels, filter.Labels) {
-			continue
-		}
-		wg.Add(1)
-
-		go func(repository internal.Repository) {
-			err := repository.SyncRepo()
-			if err != nil {
-				fmt.Printf("%v\n", err)
-			}
-			wg.Done()
-		}(repo)
-	}
-	wg.Wait()
-
-}
-
 func init() {
-
-	//TODO flag validation
-
 
 	commitsCmd.Flags().StringSlice("label", []string{}, "label")
 	commitsCmd.Flags().StringSlice("author", []string{}, "author")
@@ -153,14 +126,12 @@ func init() {
 	flag := commitsCmd.Flags().Lookup("from")
 	flag.Annotations = annotation
 
-
 	annotation = make(map[string][]string)
 	annotation[cobra.BashCompCustom] = []string{"__display_values"}
 	commitsCmd.Flags().StringSlice("display", []string{}, "display")
 	flag = commitsCmd.Flags().Lookup("display")
 	flag.Annotations = annotation
 
-	//_ = commitsCmd.MarkFlagRequired("from")
 	commitsCmd.Flags().BoolP("update", "u", false, "Update all git repos")
 	rootCmd.AddCommand(commitsCmd)
 
