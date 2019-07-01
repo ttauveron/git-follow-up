@@ -26,7 +26,7 @@ func NewFilter(flags *pflag.FlagSet) (f *Filter) {
 	if err != nil {
 		fmt.Printf("%v\n", err)
 	}
-	f.setFrom(from)
+	f.setFrom(from, time.Now())
 
 	// Labels filter
 	labels, err := flags.GetStringSlice("label")
@@ -56,11 +56,9 @@ func NewFilter(flags *pflag.FlagSet) (f *Filter) {
 	return
 }
 
-func (filter *Filter) setFrom(from string) {
-	// TODO handle timezone
+func (filter *Filter) setFrom(from string, now time.Time) {
 	regexDate, _ := regexp.Compile("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")
 
-	now := time.Now()
 	currentYear, currentMonth, currentDay := now.Date()
 	currentLocation := now.Location()
 
@@ -72,7 +70,8 @@ func (filter *Filter) setFrom(from string) {
 		filter.From = time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
 		break
 	case from == "wtd":
-		y, m, d := now.AddDate(0, 0, -(int(now.Weekday()+1)%8 - 1)).Date()
+		weekday := now.Weekday()
+		y, m, d := now.AddDate(0, 0, -(int(weekday+6)%7)).Date()
 		filter.From = time.Date(y, m, d, 0, 0, 0, 0, currentLocation)
 		break
 	case from == "today":
@@ -97,7 +96,7 @@ func (filter Filter) Filter(c *object.Commit) (b bool) {
 
 	switch {
 	// Filter by date
-	case !c.Author.When.After(filter.From):
+	case c.Author.When.Before(filter.From):
 		b = false
 		break
 	// Filter by author

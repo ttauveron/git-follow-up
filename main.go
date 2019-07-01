@@ -22,6 +22,3 @@ import (
 func main() {
 	cmd.Execute()
 }
-
-// todo autocompletion
-// todo concurrency sync & more
