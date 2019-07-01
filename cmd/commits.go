@@ -93,23 +93,23 @@ func formatCommit(c internal.Commit) (result string) {
 
 	// Color reference : https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
 	if internal.Contains(filter.Display, "repo") {
-		result += "\033[1;31m[" + name + "\t]\033[0m"
+		result += "\033[1;31m" + name + "\t \033[0m"
 	}
 
 	if internal.Contains(filter.Display, "date") {
-		result += "\033[1;36m[" + date + "]\t\033[0m"
+		result += "\033[1;36m" + date + "\t \033[0m"
 	}
 
 	if internal.Contains(filter.Display, "hash") {
-		result += "\033[1;34m[" + hash + "]\t\033[0m"
+		result += "\033[1;34m" + hash + "\t\033[0m"
 	}
 
 	if internal.Contains(filter.Display, "message") {
-		result += " " + message + " "
+		result += " " + message + " \t"
 	}
 
 	if internal.Contains(filter.Display, "author") {
-		result += "\033[1;32m\t(" + author + ")\033[0m"
+		result += "\033[1;32m" + author + "\033[0m"
 	}
 
 	return result
