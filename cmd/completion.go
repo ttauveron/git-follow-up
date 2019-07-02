@@ -1,5 +1,5 @@
 /*
-Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+Copyright © 2019 Thibaut Tauveron <thibaut.tauveron@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import (
 	"os"
 )
 
-// completionCmd represents the completion command
 var completionCmd = &cobra.Command{
 	Use:   "completion",
 	Short: "Generates bash completion scripts",

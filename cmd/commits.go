@@ -30,14 +30,7 @@ var filter *internal.Filter
 // commitsCmd represents the commits command
 var commitsCmd = &cobra.Command{
 	Use:   "commits",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-
+	Short: "Get list of commits from your tracked repositories",
 	Run: func(cmd *cobra.Command, args []string) {
 		filter = internal.NewFilter(cmd.Flags())
 
@@ -117,10 +110,10 @@ func formatCommit(c internal.Commit) (result string) {
 
 func init() {
 
-	commitsCmd.Flags().StringSlice("label", []string{}, "label")
-	commitsCmd.Flags().StringSlice("author", []string{}, "author")
+	commitsCmd.Flags().StringSlice("label", []string{}, "filters by project labels")
+	commitsCmd.Flags().StringSlice("author", []string{}, "filters by authors")
 
-	commitsCmd.Flags().String("from", "wtd", "ytd, mtd, wtd, yesterday, today, [yyyy-MM-dd]")
+	commitsCmd.Flags().String("from", "wtd", "filters commit by date (ytd, mtd, wtd, yesterday, today, [yyyy-MM-dd])")
 	annotation := make(map[string][]string)
 	annotation[cobra.BashCompCustom] = []string{"__from_values"}
 	flag := commitsCmd.Flags().Lookup("from")
@@ -128,11 +121,11 @@ func init() {
 
 	annotation = make(map[string][]string)
 	annotation[cobra.BashCompCustom] = []string{"__display_values"}
-	commitsCmd.Flags().StringSlice("display", []string{}, "display")
+	commitsCmd.Flags().StringSlice("display", []string{}, "fields to be displayed")
 	flag = commitsCmd.Flags().Lookup("display")
 	flag.Annotations = annotation
 
-	commitsCmd.Flags().BoolP("update", "u", false, "Update all git repos")
+	commitsCmd.Flags().BoolP("update", "u", false, "synchronizes git repositories")
 	rootCmd.AddCommand(commitsCmd)
 
 }

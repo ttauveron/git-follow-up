@@ -34,13 +34,17 @@ type Config struct {
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "git-follow-up",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Long: `        _ _           __      _ _                                  
+       (_) |         / _|    | | |                                 
+   __ _ _| |_ ______| |_ ___ | | | _____      ________ _   _ _ __  
+  / _`+"`"+` | | __|______|  _/ _ \| | |/ _ \ \ /\ / /______| | | | '_ \
+ | (_| | | |_       | || (_) | | | (_) \ V  V /       | |_| | |_) |
+  \__, |_|\__|      |_| \___/|_|_|\___/ \_/\_/         \__,_| .__/
+   __/ |                                                    | |
+  |___/                                                     |_|          
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Keeps track of contributions made on multiple git repositories described in a yaml configuration file.
+Those repositories can be hosted on any platform, and accessed through ssh, https, with or without an access token.`,
 	BashCompletionFunction: bash_completion_func,
 }
 
@@ -56,15 +60,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.git-follow-up/config.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -87,23 +83,22 @@ func initConfig() {
 		viper.SetConfigName("config")
 
 		// Create repositories folder if not exists
-		_ = os.Mkdir(configPath+"/git", 0700)
+		_ = os.MkdirAll(configPath+"/git", 0700)
 
-		viper.ReadInConfig()
-		err = viper.Unmarshal(&config)
-		for i := 0; i < len(config.Repositories); i++ {
-			config.Repositories[i].LocalPath = gitPath + config.Repositories[i].Name
-		}
+		//If a config file is found, read it in.
+		if err := viper.ReadInConfig(); err == nil {
+			err = viper.Unmarshal(&config)
+			for i := 0; i < len(config.Repositories); i++ {
+				config.Repositories[i].LocalPath = gitPath + config.Repositories[i].Name
+			}
 
-		if err != nil {
-			panic("Unable to unmarshal config")
+			if err != nil {
+				panic("Unable to unmarshal config")
+			}
 		}
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	//if err := viper.ReadInConfig(); err == nil {
-	//	fmt.Println("Using config file:", viper.ConfigFileUsed())
-	//}
+
 }

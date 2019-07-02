@@ -1,5 +1,5 @@
 /*
-Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+Copyright © 2019 Thibaut Tauveron <thibaut.tauveron@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,13 +25,10 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Synchronizes remote git repositories to local copies",
+	Long: `Synchronizes remote git repositories to local copies
+This operation may initially take some time for large repositories...
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var repoList []internal.Repository
 
@@ -52,7 +49,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	updateCmd.Flags().StringSlice("label", []string{}, "label")
+	updateCmd.Flags().StringSlice("label", []string{}, "filters by project labels")
 	rootCmd.AddCommand(updateCmd)
 
 }
