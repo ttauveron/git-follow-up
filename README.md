@@ -8,7 +8,7 @@ Each git project is synced concurrently as a bare repository locally, in `~/.git
 Then the commits list can be queried and filtered with the provided flags.  
 
 
-#### Configuration
+### Configuration
 
 Here is an example `config.yaml` file for describing your git repositories : 
 
@@ -35,7 +35,7 @@ repositories:
     url: https://github.com/spf13/viper
 ```
 
-##### Description of the yaml fields
+#### Description of the yaml fields
 
 | Field name | Description |
 |------|-------------------------------|
@@ -44,7 +44,7 @@ repositories:
 | authentication | The types available are *ssh* and *access_token*. <br>  The *auth_file* parameter specifies the key to be used to authenticate to the git hosting platform you're using. <br> For a ssh authentication, we are pointing to a ssh private key file and for a https authentication, we are pointing to a file containing the access token provided by the git hosting platform.| 
 |labels| Labels add filtering options to repositories, allowing to query a subset of the defined repositories |
 
-#### Usage
+### Usage
 
 First, we need to sync the repositories defined in the config file locally.
 
@@ -74,7 +74,7 @@ For example, we can list contributors on a time range :
 git-follow-up commits --from ytd --display author | sort | uniq
 ```
 
-#### Bash completion
+### Bash completion
 
 To activate bash completion for git-follow-up, run the following command :
 
