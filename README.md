@@ -9,6 +9,14 @@ Then the commits list can be queried and filtered with the provided flags.
 
 ![Screenshot of git-follow-up](https://user-images.githubusercontent.com/1558361/60553906-b2cb3480-9d35-11e9-9e4b-fef28cecd9ec.png)
 
+### Installation
+
+If you have go already installed, you can run : 
+```bash
+go get github.com/ttauveron/git-follow-up
+```
+
+You can also download the binary matching your OS (https://github.com/ttauveron/git-follow-up/releases) and copy it, for example, in `/usr/local/bin` (don't forget to `chmod +x` the binary).
 
 ### Configuration
 
