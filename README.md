@@ -9,6 +9,12 @@ Then the commits list can be queried and filtered with the provided flags.
 
 ![Screenshot of git-follow-up](https://user-images.githubusercontent.com/1558361/60553906-b2cb3480-9d35-11e9-9e4b-fef28cecd9ec.png)
 
+### Why this project?
+
+I've been working in organizations where there are a lot of git repos (microservices, packaging, config, ...) and I wasn't fully satisfied with the git platform web ui. 
+My need was simply to check what happened on all repos, so as to quickly prepare a stand-up meeting, or keep track of the overall progress.
+Therefore, I chose to develop my own tool in golang, using the occasion to learn this language ;)
+
 ### Installation
 
 If you have go already installed, you can run : 
