@@ -1,10 +1,9 @@
-package internal
+package git
 
 import (
+	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"testing"
 	"time"
-
-	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
 func TestFilter_setFrom(t *testing.T) {

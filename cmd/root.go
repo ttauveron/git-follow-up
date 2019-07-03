@@ -17,10 +17,10 @@ package cmd
 
 import (
 	"fmt"
-	"git-follow-up/internal"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/ttauveron/git-follow-up/git"
 	"os"
 )
 
@@ -28,16 +28,16 @@ var cfgFile, configPath, gitPath string
 var config Config
 
 type Config struct {
-	Repositories []internal.Repository
+	Repositories []git.Repository
 }
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "git-follow-up",
+	Use: "git-follow-up",
 	Long: `        _ _           __      _ _                                  
        (_) |         / _|    | | |                                 
    __ _ _| |_ ______| |_ ___ | | | _____      ________ _   _ _ __  
-  / _`+"`"+` | | __|______|  _/ _ \| | |/ _ \ \ /\ / /______| | | | '_ \
+  / _` + "`" + ` | | __|______|  _/ _ \| | |/ _ \ \ /\ / /______| | | | '_ \
  | (_| | | |_       | || (_) | | | (_) \ V  V /       | |_| | |_) |
   \__, |_|\__|      |_| \___/|_|_|\___/ \_/\_/         \__,_| .__/
    __/ |                                                    | |
@@ -99,6 +99,5 @@ func initConfig() {
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
-
 
 }

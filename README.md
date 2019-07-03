@@ -7,6 +7,8 @@ Each git project is synced concurrently as a bare repository locally, in `~/.git
 
 Then the commits list can be queried and filtered with the provided flags.  
 
+![Screenshot of git-follow-up](https://user-images.githubusercontent.com/1558361/60553906-b2cb3480-9d35-11e9-9e4b-fef28cecd9ec.png)
+
 
 ### Configuration
 

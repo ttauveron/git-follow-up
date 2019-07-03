@@ -17,22 +17,22 @@ package cmd
 
 import (
 	"fmt"
-	"git-follow-up/internal"
 	"github.com/spf13/cobra"
+	"github.com/ttauveron/git-follow-up/git"
 	"os"
 	"sort"
 	"strings"
 	"text/tabwriter"
 )
 
-var filter *internal.Filter
+var filter *git.Filter
 
 // commitsCmd represents the commits command
 var commitsCmd = &cobra.Command{
 	Use:   "commits",
 	Short: "Get list of commits from your tracked repositories",
 	Run: func(cmd *cobra.Command, args []string) {
-		filter = internal.NewFilter(cmd.Flags())
+		filter = git.NewFilter(cmd.Flags())
 
 		// Sync repos if update flag is provided
 		doUpdate, err := cmd.Flags().GetBool("update")
@@ -44,12 +44,12 @@ var commitsCmd = &cobra.Command{
 			updateCmd.Run(cmd, args)
 		}
 
-		var commits []internal.Commit
+		var commits []git.Commit
 
 		// Listing log messages of repositories
 		for _, repo := range config.Repositories {
 			// Skip update on non-matching labels
-			if cmd.Flags().Changed("label") && !internal.ContainsAll(repo.Labels, filter.Labels) {
+			if cmd.Flags().Changed("label") && !git.ContainsAll(repo.Labels, filter.Labels) {
 				continue
 			}
 			cs, err := repo.ListCommits(*filter)
@@ -59,7 +59,7 @@ var commitsCmd = &cobra.Command{
 			}
 		}
 
-		sort.Sort(internal.ByDate(commits))
+		sort.Sort(git.ByDate(commits))
 
 		// initialize tabwriter
 		w := new(tabwriter.Writer)
@@ -74,7 +74,7 @@ var commitsCmd = &cobra.Command{
 	},
 }
 
-func formatCommit(c internal.Commit) (result string) {
+func formatCommit(c git.Commit) (result string) {
 	message := strings.Split(c.Commit.Message, "\n")[0]
 	if len(message) > 70 {
 		message = message[:70] + "..."
@@ -85,23 +85,23 @@ func formatCommit(c internal.Commit) (result string) {
 	name := c.Name
 
 	// Color reference : https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
-	if internal.Contains(filter.Display, "repo") {
+	if git.Contains(filter.Display, "repo") {
 		result += "\033[1;31m" + name + "\t \033[0m"
 	}
 
-	if internal.Contains(filter.Display, "date") {
+	if git.Contains(filter.Display, "date") {
 		result += "\033[1;36m" + date + "\t \033[0m"
 	}
 
-	if internal.Contains(filter.Display, "hash") {
+	if git.Contains(filter.Display, "hash") {
 		result += "\033[1;34m" + hash + "\t\033[0m"
 	}
 
-	if internal.Contains(filter.Display, "message") {
+	if git.Contains(filter.Display, "message") {
 		result += " " + message + " \t"
 	}
 
-	if internal.Contains(filter.Display, "author") {
+	if git.Contains(filter.Display, "author") {
 		result += "\033[1;32m" + author + "\033[0m"
 	}
 

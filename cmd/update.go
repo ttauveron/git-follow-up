@@ -17,8 +17,8 @@ package cmd
 
 import (
 	"fmt"
-	"git-follow-up/internal"
 	"github.com/spf13/cobra"
+	"github.com/ttauveron/git-follow-up/git"
 	"sync"
 )
 
@@ -30,13 +30,13 @@ var updateCmd = &cobra.Command{
 This operation may initially take some time for large repositories...
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		var repoList []internal.Repository
+		var repoList []git.Repository
 
 		// Skip update on non-matching labels
 		if cmd.Flags().Changed("label") {
 			for _, repo := range config.Repositories {
 				filterLabels, _ := cmd.Flags().GetStringSlice("label")
-				if internal.ContainsAll(repo.Labels, filterLabels) {
+				if git.ContainsAll(repo.Labels, filterLabels) {
 					repoList = append(repoList, repo)
 				}
 			}
@@ -55,13 +55,13 @@ func init() {
 }
 
 // Syncing all repositories defined in the `config.yaml` file
-func UpdateRepos(repos []internal.Repository) {
+func UpdateRepos(repos []git.Repository) {
 	var wg sync.WaitGroup
 	for _, repo := range repos {
 
 		wg.Add(1)
 
-		go func(repository internal.Repository) {
+		go func(repository git.Repository) {
 			err := repository.SyncRepo()
 			if err != nil {
 				fmt.Printf("%v\n", err)

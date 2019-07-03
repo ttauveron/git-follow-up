@@ -16,7 +16,7 @@ limitations under the License.
 package main
 
 import (
-	"git-follow-up/cmd"
+	"github.com/ttauveron/git-follow-up/cmd"
 )
 
 func main() {
