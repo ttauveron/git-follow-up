@@ -26,7 +26,9 @@ You can also download the binary matching your OS (https://github.com/ttauveron/
 
 ### Configuration
 
-Here is an example `config.yaml` file for describing your git repositories : 
+The `config.yaml`, that should be located by default in the `~/.git-follow-up/` directory, references all the repositories that need to be tracked.
+
+Here is an example of that config file describing the repositories : 
 
 ```yaml
 repositories:
