@@ -65,36 +65,38 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// Search config in home directory with name ".git-follow-up" (without extension).
+	configPath = home + "/.git-follow-up"
+	gitPath = configPath + "/git/"
+
+	// Create repositories folder if not exists
+	_ = os.MkdirAll(configPath+"/git", 0700)
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".git-follow-up" (without extension).
-		configPath = home + "/.git-follow-up"
-		gitPath = configPath + "/git/"
 		viper.AddConfigPath(configPath)
 		viper.SetConfigName("config")
+	}
 
-		// Create repositories folder if not exists
-		_ = os.MkdirAll(configPath+"/git", 0700)
+	//If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err == nil {
+		err = viper.Unmarshal(&config)
+		for i := 0; i < len(config.Repositories); i++ {
+			config.Repositories[i].LocalPath = gitPath + config.Repositories[i].Name
+		}
 
-		//If a config file is found, read it in.
-		if err := viper.ReadInConfig(); err == nil {
-			err = viper.Unmarshal(&config)
-			for i := 0; i < len(config.Repositories); i++ {
-				config.Repositories[i].LocalPath = gitPath + config.Repositories[i].Name
-			}
-
-			if err != nil {
-				panic("Unable to unmarshal config")
-			}
+		if err != nil {
+			panic("Unable to unmarshal config")
 		}
 	}
 
